@@ -1,0 +1,23 @@
+.unitToggle {
+  display: flex;
+  gap: 8px;
+  margin: 16px;
+}
+
+.button {
+  padding: 8px 16px;
+  border: 1px solid var(--text-color);
+  background-color: var(--card-bg);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.button:hover {
+  background-color: #007bff;
+  color: white;
+}

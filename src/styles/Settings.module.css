@@ -1,0 +1,8 @@
+.container {
+  max-width: 600px;
+  margin: 16px auto;
+  padding: 16px;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  text-align: center;
+}

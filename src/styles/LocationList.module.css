@@ -1,0 +1,42 @@
+.locationList {
+  margin: 16px;
+  padding: 16px;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+}
+
+.locationItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.locationName {
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.locationName:hover {
+  color: #007bff;
+}
+
+.removeButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.removeButton:hover {
+  background-color: #c82333;
+}
+
+@media (max-width: 480px) {
+  .locationList {
+    margin: 8px;
+    padding: 12px;
+  }
+}
