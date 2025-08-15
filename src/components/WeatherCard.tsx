@@ -12,7 +12,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weather, units }) => {
     <div className={styles.card}>
       <h2>{weather.name}</h2>
       <img
-        src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}.png`}
+        src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}.png`}
         alt="Weather icon"
       />
       <p>Temperature: {weather.main.temp.toFixed(1)}°{units === 'metric' ? 'C' : 'F'}</p>
