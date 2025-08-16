@@ -1,23 +1,32 @@
 .unitToggle {
   display: flex;
-  gap: 8px;
-  margin: 16px;
+  gap: 12px;
+  margin: 16px auto;
+  max-width: 200px;
 }
 
 .button {
-  padding: 8px 16px;
-  border: 1px solid var(--text-color);
-  background-color: var(--card-bg);
+  padding: 10px 20px;
+  border: 1px solid #0288d1;
+  background-color: rgba(255, 255, 255, 0.95);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .button.active {
-  background-color: #007bff;
+  background-color: #0288d1;
   color: white;
 }
 
 .button:hover {
-  background-color: #007bff;
+  background-color: #0288d1;
   color: white;
+}
+
+@media (max-width: 480px) {
+  .unitToggle {
+    margin: 12px;
+  }
 }
