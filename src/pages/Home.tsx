@@ -1,4 +1,3 @@
-// In src/pages/Home.tsx
 import React, { useState, useEffect } from 'react';
 import WeatherCard from '../components/WeatherCard';
 import SearchBar from '../components/SearchBar';
@@ -27,17 +26,21 @@ const Home: React.FC = () => {
         }
         navigator.geolocation.getCurrentPosition(
           async (position) => {
-            const { latitude: lat, longitude: lon } = position.coords;
-            const weatherData = await fetchCurrentWeather(lat, lon, units);
-            const forecastData = await fetchForecast(lat, lon, units);
-            setWeather(weatherData);
-            setForecast(forecastData);
-            saveLocation({ name: weatherData.name, lat, lon });
+            try {
+              const { latitude: lat, longitude: lon } = position.coords;
+              const weatherData = await fetchCurrentWeather(lat, lon, units);
+              const forecastData = await fetchForecast(lat, lon, units);
+              setWeather(weatherData);
+              setForecast(forecastData);
+              saveLocation({ name: weatherData.name, lat, lon });
+            } catch (err: any) {
+              setError(err.message || 'Failed to fetch weather data');
+            }
           },
           () => setError('Location access denied')
         );
-      } catch (err) {
-        setError('Failed to fetch weather data');
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch weather data');
       }
     };
     fetchUserWeather();
@@ -55,8 +58,8 @@ const Home: React.FC = () => {
       setWeather(weatherData);
       setForecast(forecastData);
       saveLocation(location);
-    } catch (err) {
-      setError('Failed to fetch weather data');
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch weather data for selected location');
     }
   };
 
@@ -66,35 +69,60 @@ const Home: React.FC = () => {
       <div className={styles.controls}>
         <UnitToggle units={units} setUnits={setUnits} />
         <div>
-          <button onClick={() => setView('current')}>Current</button>
-          <button onClick={() => setView('hourly')}>Hourly</button>
-          <button onClick={() => setView('daily')}>Daily</button>
+          <button
+            className={`${styles.button} ${view === 'current' ? styles.active : ''}`}
+            onClick={() => setView('current')}
+          >
+            Current
+          </button>
+          <button
+            className={`${styles.button} ${view === 'hourly' ? styles.active : ''}`}
+            onClick={() => setView('hourly')}
+          >
+            Hourly
+          </button>
+          <button
+            className={`${styles.button} ${view === 'daily' ? styles.active : ''}`}
+            onClick={() => setView('daily')}
+          >
+            Daily
+          </button>
         </div>
         <LocationList onLocationSelect={handleLocationSelect} />
       </div>
       {error && <Notification message={error} />}
       {view === 'current' && weather && <WeatherCard weather={weather} units={units} />}
       {view === 'hourly' && forecast && (
-        <div>
+        <div className={styles.forecast}>
           <h3>Hourly Forecast</h3>
           {forecast.list.slice(0, 8).map((item, index) => (
             <div key={index}>
               <p>
                 {new Date(item.dt * 1000).toLocaleTimeString()}: {item.main.temp.toFixed(1)}°
                 {units === 'metric' ? 'C' : 'F'} - {item.weather[0].description}
+                <img
+                  src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
+                  alt="Weather icon"
+                  style={{ width: '40px', verticalAlign: 'middle', marginLeft: '8px' }}
+                />
               </p>
             </div>
           ))}
         </div>
       )}
       {view === 'daily' && forecast && (
-        <div>
+        <div className={styles.forecast}>
           <h3>Daily Forecast</h3>
           {forecast.list.filter((_, index) => index % 8 === 0).map((item, index) => (
             <div key={index}>
               <p>
                 {new Date(item.dt * 1000).toLocaleDateString()}: {item.main.temp.toFixed(1)}°
                 {units === 'metric' ? 'C' : 'F'} - {item.weather[0].description}
+                <img
+                  src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
+                  alt="Weather icon"
+                  style={{ width: '40px', verticalAlign: 'middle', marginLeft: '8px' }}
+                />
               </p>
             </div>
           ))}
