@@ -2,8 +2,6 @@
 
 A modern, responsive weather application built with React, TypeScript, and Vite, designed to provide real-time weather data, location-based forecasting, and a user-friendly interface. The app features a clean, weather-inspired design with a cloud background, semi-transparent cards, and smooth animations, resembling professional weather apps like AccuWeather or Weather Underground.
 
-GitHub Repository: [https://github.com/your-username/react-weather-app](https://github.com/your-username/react-weather-app) (Replace with your actual repository URL)
-
 ## Features
 
 - **Real-Time Weather Data**: Displays current temperature, humidity, wind speed, and weather conditions using the OpenWeatherMap API.
@@ -13,7 +11,7 @@ GitHub Repository: [https://github.com/your-username/react-weather-app](https://
 - **Saved Locations**: Persist favorite locations in localStorage for quick access.
 - **Offline Access**: Displays cached weather data when offline, ensuring usability without internet.
 - **Responsive Design**: Optimized for mobile, tablet, and desktop (breakpoints: 320px, 480px, 768px, 1024px, 1200px).
-- **Modern UI**: Features a cloud-themed background (`cloud.webp`), semi-transparent cards, weather-blue accents, hover effects, and smooth transitions.
+- **Modern UI**: Features a cloud-themed background (`clouds.webp`), semi-transparent cards, weather-blue accents, hover effects, and smooth transitions.
 - **Error Handling**: Shows user-friendly notifications for errors (e.g., location access denied, invalid API key).
 
 ## Tech Stack
@@ -29,9 +27,9 @@ GitHub Repository: [https://github.com/your-username/react-weather-app](https://
 ## Prerequisites
 
 - Node.js (v16 or later)
-- OpenWeatherMap API key (sign up at [https://openweathermap.org/](https://openweathermap.org/))
+- OpenWeatherMap API key
 - Git
-- Vercel account for deployment
+- Vercel for deployment
 
 ## Setup Instructions
 
@@ -44,14 +42,10 @@ GitHub Repository: [https://github.com/your-username/react-weather-app](https://
 
 1. **Create `README.md`**:
    - Save the above content in a file named `README.md` in the project root.
-   - Replace placeholders:
-     - `https://github.com/your-username/react-weather-app` with your actual GitHub repository URL.
-     - `[Your Name]` with your name or GitHub profile link.
-   - If you have a different live URL, update `https://react-weather-app-zeta.vercel.app/` accordingly.
 
 2. **Verify Content**:
    - Ensure the repository URL and live demo link are correct.
-   - Confirm the project structure matches your app (adjust if you have additional files).
+   - Confirm the project structure matches your app.
    - Add any additional acknowledgments or notes specific to your project.
 
 3. **Commit to GitHub**:
