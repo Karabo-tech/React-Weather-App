@@ -2,8 +2,6 @@
 
 A modern, responsive weather application built with React, TypeScript, and Vite, designed to provide real-time weather data, location-based forecasting, and a user-friendly interface. The app features a clean, weather-inspired design with a cloud background, semi-transparent cards, and smooth animations, resembling professional weather apps like AccuWeather or Weather Underground.
 
-Live Demo: [https://react-weather-app-zeta.vercel.app/](https://react-weather-app-zeta.vercel.app/)
-
 GitHub Repository: [https://github.com/your-username/react-weather-app](https://github.com/your-username/react-weather-app) (Replace with your actual repository URL)
 
 ## Features
@@ -62,5 +60,5 @@ GitHub Repository: [https://github.com/your-username/react-weather-app](https://
    git commit -m "Add professional README for React Weather App"
    git push origin main
 
-# Deployment link
-## 
+# Live Demo
+## [https://react-weather-app-zeta.vercel.app/]
