@@ -1,21 +1,13 @@
 .app {
   min-height: 100vh;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  background-color: #f0f0f0;
+  color: #333333;
 }
 
 .nav {
-  background-color: var(--card-bg);
+  background-color: #ffffff;
   padding: 16px;
-  display: flex;
-  gap: 16px;
-}
-
-.nav a {
-  color: var(--text-color);
-  text-decoration: none;
-}
-
-.nav a:hover {
-  color: #007bff;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
