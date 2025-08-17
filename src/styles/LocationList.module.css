@@ -1,7 +1,7 @@
 .locationList {
   margin: 24px auto;
   padding: 16px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   max-width: 300px;
@@ -10,7 +10,7 @@
 .locationList h3 {
   margin: 0 0 12px;
   font-size: 1.4rem;
-  color: #0288d1;
+  color: var(--primary-color);
 }
 
 .locationItem {
@@ -23,16 +23,16 @@
 
 .locationName {
   cursor: pointer;
-  color: #333333;
+  color: var(--text-color);
   transition: color 0.3s ease;
 }
 
 .locationName:hover {
-  color: #0288d1;
+  color: var(--primary-color);
 }
 
 .removeButton {
-  background-color: #d32f2f;
+  background-color: var(--error-color);
   color: white;
   border: none;
   padding: 6px 12px;
@@ -45,9 +45,48 @@
   background-color: #b71c1c;
 }
 
+@media (max-width: 320px) {
+  .locationList {
+    margin: 12px;
+    padding: 12px;
+    max-width: 100%;
+  }
+
+  .locationList h3 {
+    font-size: 1.2rem;
+  }
+
+  .locationItem {
+    padding: 6px 0;
+  }
+
+  .removeButton {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+}
+
 @media (max-width: 480px) {
   .locationList {
     margin: 16px;
     padding: 12px;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .locationList {
+    max-width: 350px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .locationList {
+    max-width: 400px;
+    padding: 20px;
+  }
+
+  .locationList h3 {
+    font-size: 1.6rem;
   }
 }
