@@ -3,11 +3,94 @@
 }
 
 .nav {
-  background-color: rgba(2, 136, 209, 0.95); /* Weather-blue */
-  color: white;
+  background-color: var(--card-bg);
+  color: var(--text-color);
   padding: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
   font-size: 1.8rem;
   font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: var(--primary-color);
+}
+
+.links {
+  display: flex;
+  gap: 16px;
+}
+
+.links a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.links a:hover {
+  color: var(--secondary-color);
+}
+
+@media (max-width: 480px) {
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+  }
+
+  .links {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .links a {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .logo {
+    font-size: 1.3rem;
+  }
+
+  .links a {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .nav {
+    padding: 24px;
+  }
+
+  .logo {
+    font-size: 2rem;
+  }
+
+  .links a {
+    font-size: 1.3rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .nav {
+    padding: 28px;
+  }
+
+  .logo {
+    font-size: 2.2rem;
+  }
+
+  .links a {
+    font-size: 1.4rem;
+  }
 }

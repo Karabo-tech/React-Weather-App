@@ -8,22 +8,23 @@
 
 .input {
   padding: 12px;
-  border: 1px solid #0288d1;
+  border: 1px solid var(--primary-color);
   border-radius: 8px;
   font-size: 1rem;
   flex: 1;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: var(--card-bg);
+  color: var(--text-color);
   transition: border-color 0.3s ease;
 }
 
 .input:focus {
   outline: none;
-  border-color: #01579b;
+  border-color: var(--secondary-color);
 }
 
 .button {
   padding: 12px 24px;
-  background-color: #0288d1;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 8px;
@@ -33,14 +34,36 @@
 }
 
 .button:hover {
-  background-color: #01579b;
+  background-color: var(--secondary-color);
 }
 
 .error {
-  color: #d32f2f;
+  color: var(--error-color);
   font-size: 0.9rem;
   margin-top: 8px;
   text-align: center;
+}
+
+@media (max-width: 320px) {
+  .searchBar {
+    flex-direction: column;
+    margin: 12px;
+    padding: 0 8px;
+  }
+
+  .input {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .error {
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -51,5 +74,34 @@
 
   .button {
     width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .searchBar {
+    max-width: 700px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .searchBar {
+    max-width: 800px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .searchBar {
+    max-width: 900px;
+    padding: 0 24px;
+  }
+
+  .input {
+    padding: 14px;
+    font-size: 1.1rem;
+  }
+
+  .button {
+    padding: 14px 28px;
+    font-size: 1.1rem;
   }
 }

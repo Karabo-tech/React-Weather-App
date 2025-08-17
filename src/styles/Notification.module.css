@@ -1,5 +1,5 @@
 .notification {
-  background-color: #d32f2f;
+  background-color: var(--error-color);
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
@@ -7,4 +7,30 @@
   text-align: center;
   max-width: 600px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 320px) {
+  .notification {
+    padding: 8px 16px;
+    margin: 12px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .notification {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .notification {
+    max-width: 700px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .notification {
+    max-width: 800px;
+  }
 }
