@@ -9,37 +9,75 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ onLocationSelect }) => {
   const [query, setQuery] = useState('');
+  const [results, setResults] = useState<GeolocationData[]>([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
-    if (!query) return;
+    if (!query.trim()) return;
+    setLoading(true);
+    setError('');
     try {
-      const results = await searchLocation(query);
-      if (results.length > 0) {
-        onLocationSelect(results[0]);
-        setQuery('');
-        setError('');
+      const searchResults = await searchLocation(query);
+      if (searchResults.length > 0) {
+        setResults(searchResults);
       } else {
         setError('No locations found');
+        setResults([]);
       }
     } catch (err) {
       setError('Failed to search location');
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectLocation = (location: GeolocationData) => {
+    onLocationSelect(location);
+    setQuery('');
+    setResults([]);
+    setError('');
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
 
   return (
     <div className={styles.searchBar}>
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search for a city..."
-        className={styles.input}
-      />
-      <button onClick={handleSearch} className={styles.button}>
-        Search
-      </button>
+      <div className={styles.searchContainer}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder="Search for a city..."
+          className={styles.input}
+        />
+        <button onClick={handleSearch} className={styles.button} disabled={loading}>
+          {loading ? 'Searching...' : 'Search'}
+        </button>
+      </div>
+      
       {error && <p className={styles.error}>{error}</p>}
+      
+      {results.length > 0 && (
+        <div className={styles.resultsList}>
+          {results.map((result, index) => (
+            <button
+              key={index}
+              className={styles.resultItem}
+              onClick={() => handleSelectLocation(result)}
+            >
+              <span className={styles.locationName}>{result.name}</span>
+              {result.country && <span className={styles.country}>{result.country}</span>}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

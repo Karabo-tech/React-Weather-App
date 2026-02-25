@@ -3,6 +3,8 @@ export interface WeatherData {
   wind: { speed: number };
   weather: { description: string; icon: string }[];
   name: string;
+  coord?: { lat: number; lon: number };
+  sys?: { country: string };
 }
 
 export interface ForecastData {
@@ -17,6 +19,15 @@ export interface SavedLocation {
   name: string;
   lat: number;
   lon: number;
+  country?: string;
+  savedAt?: number;
+}
+
+export interface SavedWeatherData {
+  location: SavedLocation;
+  weather: WeatherData;
+  forecast: ForecastData;
+  timestamp: number;
 }
 
 export interface GeolocationData {

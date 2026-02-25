@@ -37,22 +37,47 @@ A modern, responsive weather application built with React, TypeScript, and Vite,
    ```bash
    git clone https://github.com/your-username/react-weather-app.git
    cd react-weather-app
+   ```
 
-### Instructions to Use
-
-1. **Create `README.md`**:
-   - Save the above content in a file named `README.md` in the project root.
-
-2. **Verify Content**:
-   - Ensure the repository URL and live demo link are correct.
-   - Confirm the project structure matches your app.
-   - Add any additional acknowledgments or notes specific to your project.
-
-3. **Commit to GitHub**:
+2. **Install Dependencies**:
    ```bash
-   git add README.md
-   git commit -m "Add professional README for React Weather App"
-   git push origin main
+   npm install
+   ```
 
-# Live Demo
-## [https://react-weather-app-zeta.vercel.app/]
+3. **Set Up Environment Variables**:
+   - Create a `.env.local` file in the project root:
+     ```
+     VITE_OPENWEATHER_API_KEY=your_api_key_here
+     ```
+   - Replace `your_api_key_here` with your OpenWeatherMap API key (get it [here](https://openweathermap.org/api))
+
+## Running the App
+
+### Development Server
+Start the development server with hot module replacement (HMR):
+```bash
+npm run dev
+```
+The app will be available at `http://localhost:5173` (or another port if 5173 is in use).
+
+### Production Build
+Build the app for production:
+```bash
+npm run build
+```
+This will create an optimized build in the `dist/` folder.
+
+### Preview Production Build
+Preview the production build locally:
+```bash
+npm run preview OR npm run dev
+```
+
+### Linting
+Check code quality with ESLint:
+```bash
+npm run lint
+```
+
+## Live Demo
+Visit the deployed app: [https://react-weather-app-zeta.vercel.app/](https://react-weather-app-zeta.vercel.app/)
