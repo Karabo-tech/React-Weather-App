@@ -5,70 +5,173 @@ import LocationList from '../components/LocationList';
 import UnitToggle from '../components/UnitToggle';
 import Notification from '../components/Notification';
 import { fetchCurrentWeather, fetchForecast } from '../utils/api';
-import { saveLocation, getCachedWeatherData } from '../utils/storage';
+import {
+  saveLocation,
+  saveWeatherData,
+  getSavedWeatherData,
+  getAllOfflineWeatherData,
+} from '../utils/storage';
 import type { WeatherData, ForecastData, SavedLocation, GeolocationData } from '../types/weather';
 import styles from '../styles/Home.module.css';
 
 const Home: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [forecast, setForecast] = useState<ForecastData | null>(null);
+  const [forecast, setForecast] = useState<ForecastData | undefined>();
   const [units, setUnits] = useState<'metric' | 'imperial'>('metric');
   const [error, setError] = useState('');
   const [view, setView] = useState<'current' | 'hourly' | 'daily'>('current');
+  const [loading, setLoading] = useState(true);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
+  // Monitor online/offline status
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Auto-detect location on mount
   useEffect(() => {
     const fetchUserWeather = async () => {
+      setLoading(true);
+      setError('');
+
       try {
-        const cached = getCachedWeatherData('current');
-        if (cached) {
-          setWeather(cached);
-          return;
-        }
+        // Try to get current position
         navigator.geolocation.getCurrentPosition(
           async (position) => {
-            try {
-              const { latitude: lat, longitude: lon } = position.coords;
-              const weatherData = await fetchCurrentWeather(lat, lon, units);
-              const forecastData = await fetchForecast(lat, lon, units);
-              setWeather(weatherData);
-              setForecast(forecastData);
-              saveLocation({ name: weatherData.name, lat, lon });
-            } catch (err: any) {
-              setError(err.message || 'Failed to fetch weather data');
-            }
+            const { latitude: lat, longitude: lon } = position.coords;
+            await fetchWeatherData(lat, lon);
           },
-          () => setError('Location access denied')
+          (error) => {
+            // If geolocation fails, show notification but try to load cached data
+            if (error.code === 1) {
+              setError('Location access denied. Showing saved locations.');
+            } else {
+              setError('Unable to detect location. Showing saved locations.');
+            }
+            loadOfflineData();
+          }
         );
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch weather data');
+      } catch (err) {
+        console.error('Geolocation error:', err);
+        loadOfflineData();
       }
     };
+
     fetchUserWeather();
+  }, []);
+
+  // Update units
+  useEffect(() => {
+    if (weather) {
+      refetchWeatherData(weather.coord?.lat, weather.coord?.lon);
+    }
   }, [units]);
 
-  const handleLocationSelect = async (location: GeolocationData | SavedLocation) => {
+  const fetchWeatherData = async (lat: number, lon: number) => {
     try {
-      const cached = getCachedWeatherData(location.name);
-      if (cached) {
-        setWeather(cached);
+      setLoading(true);
+      setError('');
+
+      // First check cache
+      const cached = getSavedWeatherData(lat, lon);
+      if (cached && !isOnline) {
+        setWeather(cached.weather);
+        setForecast(cached.forecast);
+        setLoading(false);
         return;
       }
-      const weatherData = await fetchCurrentWeather(location.lat, location.lon, units);
-      const forecastData = await fetchForecast(location.lat, location.lon, units);
-      setWeather(weatherData);
-      setForecast(forecastData);
-      saveLocation(location);
+
+      // Fetch fresh data if online
+      if (isOnline) {
+        const weatherData = await fetchCurrentWeather(lat, lon, units);
+        const forecastData = await fetchForecast(lat, lon, units);
+
+        setWeather(weatherData);
+        setForecast(forecastData);
+
+        // Save to cache
+        const location: SavedLocation = {
+          name: weatherData.name,
+          lat,
+          lon,
+          country: weatherData.sys?.country,
+        };
+        saveLocation(location);
+        saveWeatherData(location, weatherData, forecastData);
+        // Notify LocationList component of the update
+        window.dispatchEvent(new Event('locationsUpdated'));
+      } else {
+        // If offline and no cache, show cached data
+        if (cached) {
+          setWeather(cached.weather);
+          setForecast(cached.forecast);
+        } else {
+          setError('No internet connection and no cached data available.');
+        }
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch weather data for selected location');
+      console.error('Weather fetch error:', err);
+      if (isOnline) {
+        setError(err.message || 'Failed to fetch weather data');
+      }
+      // Try to load cached data as fallback
+      const cached = getSavedWeatherData(lat, lon);
+      if (cached) {
+        setWeather(cached.weather);
+        setForecast(cached.forecast);
+        if (!error) {
+          setError('Showing cached data');
+        }
+      }
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const refetchWeatherData = async (lat?: number, lon?: number) => {
+    if (lat !== undefined && lon !== undefined) {
+      await fetchWeatherData(lat, lon);
+    }
+  };
+
+  const loadOfflineData = () => {
+    // Try to load the most recent cached weather
+    const allWeatherData = getAllOfflineWeatherData();
+    if (allWeatherData.length > 0) {
+      const mostRecent = allWeatherData.reduce((prev, current) =>
+        prev.timestamp > current.timestamp ? prev : current
+      );
+      setWeather(mostRecent.weather);
+      setForecast(mostRecent.forecast);
+    }
+    setLoading(false);
+  };
+
+  const handleLocationSelect = async (location: GeolocationData | SavedLocation) => {
+    await fetchWeatherData(location.lat, location.lon);
   };
 
   return (
     <div className={styles.container}>
+      {!isOnline && <Notification message="You are offline. Data may be cached." />}
+      {error && error !== 'You are offline. Data may be cached.' && (
+        <Notification message={error} />
+      )}
+
       <SearchBar onLocationSelect={handleLocationSelect} />
+
       <div className={styles.controls}>
         <UnitToggle units={units} setUnits={setUnits} />
-        <div>
+        <div className={styles.viewButtons}>
           <button
             className={`${styles.button} ${view === 'current' ? styles.active : ''}`}
             onClick={() => setView('current')}
@@ -88,46 +191,74 @@ const Home: React.FC = () => {
             Daily
           </button>
         </div>
-        <LocationList onLocationSelect={handleLocationSelect} />
       </div>
-      {error && <Notification message={error} />}
-      {view === 'current' && weather && <WeatherCard weather={weather} units={units} />}
+
+      {loading && weather === null && (
+        <div className={styles.loading}>Loading weather data...</div>
+      )}
+
+      {view === 'current' && weather && (
+        <WeatherCard weather={weather} forecast={forecast} units={units} />
+      )}
+
       {view === 'hourly' && forecast && (
         <div className={styles.forecast}>
           <h3>Hourly Forecast</h3>
-          {forecast.list.slice(0, 8).map((item, index) => (
-            <div key={index}>
-              <p>
-                {new Date(item.dt * 1000).toLocaleTimeString()}: {item.main.temp.toFixed(1)}°
-                {units === 'metric' ? 'C' : 'F'} - {item.weather[0].description}
+          <div className={styles.forecastGrid}>
+            {forecast.list.slice(0, 8).map((item, index) => (
+              <div key={index} className={styles.forecastItem}>
+                <p className={styles.time}>
+                  {new Date(item.dt * 1000).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </p>
                 <img
                   src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
                   alt="Weather icon"
-                  style={{ width: '40px', verticalAlign: 'middle', marginLeft: '8px' }}
+                  className={styles.forecastIcon}
                 />
-              </p>
-            </div>
-          ))}
+                <p className={styles.temp}>
+                  {Math.round(item.main.temp)}°{units === 'metric' ? 'C' : 'F'}
+                </p>
+                <p className={styles.description}>{item.weather[0].description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
+
       {view === 'daily' && forecast && (
         <div className={styles.forecast}>
           <h3>Daily Forecast</h3>
-          {forecast.list.filter((_, index) => index % 8 === 0).map((item, index) => (
-            <div key={index}>
-              <p>
-                {new Date(item.dt * 1000).toLocaleDateString()}: {item.main.temp.toFixed(1)}°
-                {units === 'metric' ? 'C' : 'F'} - {item.weather[0].description}
-                <img
-                  src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
-                  alt="Weather icon"
-                  style={{ width: '40px', verticalAlign: 'middle', marginLeft: '8px' }}
-                />
-              </p>
-            </div>
-          ))}
+          <div className={styles.dailyForecastList}>
+            {forecast.list
+              .filter((_, index) => index % 8 === 0)
+              .map((item, index) => (
+                <div key={index} className={styles.dailyForecastItem}>
+                  <p className={styles.date}>
+                    {new Date(item.dt * 1000).toLocaleDateString([], {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </p>
+                  <img
+                    src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
+                    alt="Weather icon"
+                    className={styles.dailyIcon}
+                  />
+                  <p className={styles.dailyTemp}>
+                    {Math.round(item.main.temp)}°{units === 'metric' ? 'C' : 'F'}
+                  </p>
+                  <p className={styles.dailyDescription}>{item.weather[0].description}</p>
+                </div>
+              ))}
+          </div>
         </div>
       )}
+
+      <LocationList onLocationSelect={handleLocationSelect} />
     </div>
   );
 };
