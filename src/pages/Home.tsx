@@ -7,18 +7,16 @@ import Notification from '../components/Notification';
 import { fetchCurrentWeather, fetchForecast } from '../utils/api';
 import {
   saveLocation,
-  getSavedLocations,
   saveWeatherData,
   getSavedWeatherData,
   getAllOfflineWeatherData,
-  clearExpiredCache,
 } from '../utils/storage';
 import type { WeatherData, ForecastData, SavedLocation, GeolocationData } from '../types/weather';
 import styles from '../styles/Home.module.css';
 
 const Home: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [forecast, setForecast] = useState<ForecastData | null>(null);
+  const [forecast, setForecast] = useState<ForecastData | undefined>();
   const [units, setUnits] = useState<'metric' | 'imperial'>('metric');
   const [error, setError] = useState('');
   const [view, setView] = useState<'current' | 'hourly' | 'daily'>('current');
